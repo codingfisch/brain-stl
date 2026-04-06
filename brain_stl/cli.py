@@ -7,7 +7,7 @@ def run_cli():
     parser.add_argument('-i', '--scan_filepath', type=str, default=None, help='Path to the input scan (NIfTI or DICOM)')
     parser.add_argument('-o', '--output_folder', type=str, default='.', help='Folder to save the STL file and other outputs')
     parser.add_argument('-n', '--stl_name', type=str, default='brain', help='Name of the example STL file (without extension)')
-    parser.add_argument('-ni', '--nifti_name', type=str, help='If DICOM produces multiple NifTis, this NifTi filename is used to proceed')
+    parser.add_argument('-ni', '--nifti_name', type=str, help='If DICOM produces multiple NifTis, this NifTi filename is used to proceed (without extension).')
     parser.add_argument('-u', '--url', type=str, default=OPENNEURO_URL, help='URL to download from if scan_filepath is not provided')
     parser.add_argument('-c', '--use_cache', action='store_true', help='Reuses intermediate outputs (e.g., tissue data)')
     parser.add_argument('-th', '--threshold', type=float, default=1.5, help='Threshold value for brain segmentation (0.5:fluid+gray+white matter, 1.5=gray+white matter, 2.5=white matter)')
