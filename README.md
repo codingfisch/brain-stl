@@ -29,7 +29,7 @@ run_brain_stl('/path/to/scan.nii.gz')  # or '/path/to/dicom_folder'
 ```
 The main arguments of `run_brain_stl` are
 - **`scan_filepath`**: Path to the input scan (if `None`, use scan from `url`). Default: `None`
-- **`output_folder`**: Folder to save the `.stl` file and other outputs. Default: `'.'`
+- **`output_folder`**: Folder to save the `.stl` file and other outputs. Must already exist. Default: `'.'`
 - **`stl_name`**: Name of the example `.stl` file (without extension). Default: `'brain'`
 
 <details>

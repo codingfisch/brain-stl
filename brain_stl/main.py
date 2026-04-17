@@ -50,21 +50,32 @@ def run_brain_stl(scan_filepath=None, output_folder='.', stl_name='brain', nifti
         print('Smoothing')
         mesh = trimesh.smoothing.filter_laplacian(mesh, lamb=smooth_lamb, iterations=smooth_iter)
     if stl_name is not None:
-        mesh.export(f'{output_folder}/{stl_name}.stl')
+        output_stl_path = f'{output_folder}/{stl_name}.stl'
+        mesh.export(output_stl_path)
+        print(f"Output saved to {output_stl_path}")
     return mesh
 
 
 def process_dicom(scan_filepath, output_folder, nifti_name):
     dcm2niix.main([f'-o', output_folder, scan_filepath])
-    nifti_files = sorted(Path.glob(f'{output_folder}/*.ni*'))
-    assert len(nifti_files) > 0, f'Scan filepath {scan_filepath} is no valid DICOM'
-    if len(nifti_files) > 1:
-        im = get_t1w_png(nifti_files)
-        im.save(f'{output_folder}/pick_t1w_image.png')
-        raise RuntimeError(f'The inputted DICOM {scan_filepath} resulted in {len(nifti_files)} Nifti files.'
-                           f'View {output_folder}/pick_t1w_image.png, select the filename'
-                           f'of the appropriate(=T1w) Nifti and pass it via "run_brain_stl(..., nifti_name=*)"')
-    return nifti_files[0] if nifti_name is None else [fp for fp in nifti_files if nifti_name in fp][0]
+    if nifti_name and '.' in nifti_name:
+        nifti_path = Path(output_folder) / nifti_name
+        if not os.path.exists(nifti_path):
+            raise ValueError(f"File {nifti_path} does not exist")
+        return nifti_path
+    elif nifti_name:
+        nifti_files = list(Path(output_folder).glob(f"*{nifti_name}*.ni*"))
+        return nifti_files[0]
+    else:
+        nifti_files = sorted(Path.glob(f'{output_folder}/*.ni*'))
+        assert len(nifti_files) > 0, f'Scan filepath {scan_filepath} is no valid DICOM'
+        if len(nifti_files) > 1:
+            im = get_t1w_png(nifti_files)
+            im.save(f'{output_folder}/pick_t1w_image.png')
+            raise RuntimeError(f'The inputted DICOM {scan_filepath} resulted in {len(nifti_files)} Nifti files.'
+                            f'View {output_folder}/pick_t1w_image.png, select the filename'
+                            f'of the appropriate(=T1w) Nifti and pass it via "run_brain_stl(..., nifti_name=*)"')
+        return nifti_files[0]
 
 
 def hollow_out_brain(array, hollow):
