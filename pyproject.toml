@@ -1,11 +1,11 @@
 [tool.poetry]
 name = 'brain-stl'
-version = '0.0.1'
+version = '0.0.2'
 description = 'Turn your brain MRI into a printable 3D model in seconds 🧠➡️🖨️'
-authors = ['codingfisch <l_fisc17@wwu.de>']
+authors = ['codingfisch <codingfisch@gmail.com>']
 license = 'MIT'
 readme = 'README.md'
-repository = 'https://github.com/codingfisch/brain_stl'
+repository = 'https://github.com/codingfisch/brain-stl'
 classifiers = [
     'Programming Language :: Python :: 3',
     'Operating System :: OS Independent',
@@ -14,12 +14,13 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = '^3.9'
-niftiview = '*'
+niftiview = '<2'
+colorbar = '>=0.2.1'  # 0.2.0 breaks on pillow>=13
 deepmriprep = '*'
 trimesh = '*'
-dcm2niix = '*'
+dcm2niix = '>=1.0.20250506'
 PyMCubes = '*'
-fast_simplification = '0.1.7'
+fast_simplification = '>=0.1.9'
 
 [tool.poetry.scripts]
 brain-stl = 'brain_stl.cli:run_cli'
