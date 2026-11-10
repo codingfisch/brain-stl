@@ -169,3 +169,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# brain-stl outputs and data
+*.stl
+*.avif
+*.gif
+*.nii.gz
+affine.csv
+rotation.csv
