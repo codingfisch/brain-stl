@@ -64,4 +64,4 @@ Without providing any arguments, it downloads a publicly available scan and crea
 Run `brain-stl --help` (+copy&paste into ChatGPT) to understand the usage of custom settings 💡
 
 ## Share Your Brains 🧠🌐
-Use `create_gif.py` to get a GIF of your model and share it on social media with the hashtag `#brain-stl` 🤗
+Use `animate.py` to get an animated AVIF of your model and share it on social media with the hashtag `#brain-stl` 🤗
