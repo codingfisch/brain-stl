@@ -1,3 +1,4 @@
+import shutil
 import trimesh
 import dcm2niix
 import numpy as np
@@ -25,7 +26,7 @@ def run_brain_stl(scan_filepath=None, output_folder='.', stl_name='brain', nifti
         urllib.request.urlretrieve(url, nifti_filepath)
     else:
         assert Path(str(scan_filepath)).exists(), f'Scan filepath {scan_filepath} does not exist'
-        if Path(scan_filepath).is_file() and not scan_filepath.endswith('.dcm'):
+        if Path(scan_filepath).is_file() and Path(scan_filepath).suffix != '.dcm':
             nifti_filepath = scan_filepath
         else:
             nifti_filepath = process_dicom(scan_filepath, output_folder, nifti_name)
@@ -57,23 +58,26 @@ def run_brain_stl(scan_filepath=None, output_folder='.', stl_name='brain', nifti
 
 
 def process_dicom(scan_filepath, output_folder, nifti_name):
-    dcm2niix.main([f'-o', output_folder, scan_filepath])
+    nifti_folder = Path(output_folder) / 'dicom_niftis'
+    shutil.rmtree(nifti_folder, ignore_errors=True)
+    nifti_folder.mkdir()
+    dcm2niix.main(['-o', str(nifti_folder), str(scan_filepath)])
     if nifti_name and '.' in nifti_name:
-        nifti_path = Path(output_folder) / nifti_name
-        if not os.path.exists(nifti_path):
+        nifti_path = nifti_folder / nifti_name
+        if not nifti_path.exists():
             raise ValueError(f"File {nifti_path} does not exist")
         return nifti_path
     elif nifti_name:
-        nifti_files = list(Path(output_folder).glob(f"*{nifti_name}*.ni*"))
+        nifti_files = list(nifti_folder.glob(f"*{nifti_name}*.ni*"))
         return nifti_files[0]
     else:
-        nifti_files = sorted(Path.glob(f'{output_folder}/*.ni*'))
+        nifti_files = sorted(nifti_folder.glob('*.ni*'))
         assert len(nifti_files) > 0, f'Scan filepath {scan_filepath} is no valid DICOM'
         if len(nifti_files) > 1:
             im = get_t1w_png(nifti_files)
             im.save(f'{output_folder}/pick_t1w_image.png')
-            raise RuntimeError(f'The inputted DICOM {scan_filepath} resulted in {len(nifti_files)} Nifti files.'
-                            f'View {output_folder}/pick_t1w_image.png, select the filename'
+            raise RuntimeError(f'The inputted DICOM {scan_filepath} resulted in {len(nifti_files)} Nifti files. '
+                            f'View {output_folder}/pick_t1w_image.png, select the filename '
                             f'of the appropriate(=T1w) Nifti and pass it via "run_brain_stl(..., nifti_name=*)"')
         return nifti_files[0]
 
@@ -139,7 +143,7 @@ def get_text_bbox(array, linelength):
 
 def get_t1w_png(nifti_files):
     ref_im = Image.open(Path(__file__).parent.resolve() / 'data' / 'ref.png')
-    grid_im = NiftiImageGrid(nifti_files).get_image(height=800, layout='sagittal++', fpath=1, fontsize=10)
+    grid_im = NiftiImageGrid([str(f) for f in nifti_files]).get_image(height=800, layout='sagittal++', fpath=1, fontsize=10)
     ref_im = ref_im.resize((grid_im.size[0], int(ref_im.size[1] * grid_im.size[0] / ref_im.size[0])))
     im = Image.new('L', (ref_im.size[0], ref_im.size[1] + grid_im.size[1]))
     im.paste(ref_im, (0, 0))
