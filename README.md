@@ -10,7 +10,7 @@ By default, the model is saved as `brain.stl`, but you can customize the filenam
 - **Smoothing**: Achieve a polished surface via iterative Laplacian smoothing ✨
 - **Mesh Reduction**: Simplify the mesh to reduce the size of `brain.stl` ✂️
 
-![gif](https://github.com/user-attachments/assets/64f10b4f-b136-4e86-8ef4-37f9fe0d8fa7)
+![brain](https://github.com/codingfisch/brain-stl/releases/download/readme-assets/brain.avif)
 
 ## Usage 💻
 To get your first `brain.stl` just run
